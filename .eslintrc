@@ -1,0 +1,17 @@
+{
+  "extends": ["@nuxtjs/eslint-config-typescript"],
+  "rules": {
+    "vue/html-self-closing": [
+      "error",
+      {
+        "html": {
+          "void": "any",
+          "normal": "always",
+          "component": "always"
+        },
+        "svg": "always",
+        "math": "always"
+      }
+    ]
+  }
+}
