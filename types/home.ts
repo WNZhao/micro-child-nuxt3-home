@@ -1,3 +1,14 @@
+// 分类数据接口
+export interface Category {
+  name: string;
+  children?: SubCategory[];
+}
+
+export interface SubCategory {
+  name: string;
+  items: string[];
+}
+
 // Banner 接口
 export interface Banner {
   id: number;

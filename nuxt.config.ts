@@ -12,6 +12,7 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
 
   modules: [
+    '@element-plus/nuxt',
     '@nuxt/eslint',
     '@nuxt/fonts',
     '@nuxt/icon',
@@ -19,15 +20,13 @@ export default defineNuxtConfig({
     '@nuxt/scripts',
     '@nuxt/test-utils',
     '@nuxt/ui',
-    '@element-plus/nuxt',
   ],
 
   elementPlus: {
     /** Options */
     importStyle: 'css',
-    themes: ['dark'],
   } as Record<string, unknown>,
-  css: ['@/assets/sass/main.scss'],
+  css: ['@/assets/scss/main.scss'],
 
   runtimeConfig: {
     apiSecret: '',

@@ -1,0 +1,445 @@
+// 页面通用样式
+.home-page {
+  padding: 20px;
+  background-color: #f5f7fa;
+}
+
+// 搜索区域样式
+.search-section {
+  max-width: 1200px;
+  margin: 0 auto 20px;
+
+  .search-container {
+    margin-bottom: 10px;
+
+    .input-with-select {
+      :deep(.el-input-group__prepend) {
+        padding: 0;
+        background-color: #fff;
+        border: 1px solid var(--el-input-border-color, var(--el-border-color));
+        border-right: none;
+      }
+
+      :deep(.el-select) {
+        width: 100px;
+      }
+    }
+  }
+
+  .hot-keywords {
+    font-size: 14px;
+
+    .label {
+      color: #666;
+      margin-right: 10px;
+    }
+
+    .keyword {
+      margin-right: 15px;
+      color: var(--el-color-primary);
+      text-decoration: none;
+
+      &:hover {
+        opacity: 0.8;
+      }
+    }
+  }
+}
+
+// 主要内容区域样式
+.main-content {
+  display: flex;
+  gap: 20px;
+  max-width: 1300px;
+  margin: 0 auto 30px;
+}
+
+// 左侧分类导航样式
+.category-nav {
+  width: 240px;
+  background: #fff;
+  border-radius: 4px;
+  overflow: visible;
+  position: relative;
+  z-index: 100;
+
+  .category-item {
+    padding: 15px 20px;
+    cursor: pointer;
+    position: relative;
+    white-space: nowrap;
+    font-size: 14px;
+    color: #333;
+    border-bottom: 1px solid #f5f7fa;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: all 0.3s ease;
+
+    &::after {
+      content: '>';
+      color: #ccc;
+      font-size: 12px;
+      transition: transform 0.3s ease;
+    }
+
+    &:hover {
+      color: var(--el-color-primary);
+      background: #f5f7fa;
+
+      &::after {
+        transform: rotate(90deg);
+        color: var(--el-color-primary);
+      }
+
+      .sub-categories {
+        opacity: 1;
+        visibility: visible;
+        transform: translateX(0);
+      }
+    }
+  }
+
+  .sub-categories {
+    position: absolute;
+    left: 100%;
+    top: 0;
+    width: 600px;
+    min-height: 100%;
+    background: #fff;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    z-index: 10;
+    border-radius: 0 4px 4px 0;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateX(10px);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    pointer-events: none;
+
+    &:hover {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+    }
+  }
+
+  .category-item:hover+.sub-categories,
+  .sub-categories:hover {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(0);
+    pointer-events: auto;
+  }
+
+  .sub-category-group {
+    margin-bottom: 20px;
+
+    .group-title {
+      font-weight: bold;
+      margin-bottom: 15px;
+      color: #333;
+      font-size: 15px;
+      position: relative;
+      padding-left: 12px;
+
+      &::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 3px;
+        height: 15px;
+        background: var(--el-color-primary);
+        border-radius: 1.5px;
+      }
+    }
+
+    .group-items {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+
+      .item {
+        color: #666;
+        text-decoration: none;
+        font-size: 13px;
+        transition: all 0.3s ease;
+        position: relative;
+
+        &::after {
+          content: '';
+          position: absolute;
+          bottom: -2px;
+          left: 0;
+          width: 0;
+          height: 1px;
+          background: var(--el-color-primary);
+          transition: width 0.3s ease;
+        }
+
+        &:hover {
+          color: var(--el-color-primary);
+
+          &::after {
+            width: 100%;
+          }
+        }
+      }
+    }
+  }
+}
+
+// 右侧轮播图样式
+.banner-section {
+  flex: 1;
+  height: 360px;
+  border-radius: 4px;
+  overflow: hidden;
+
+  .el-carousel {
+    height: 100%;
+  }
+
+  .el-carousel__item {
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+  }
+}
+
+// 通用section样式
+.section {
+  max-width: 1300px;
+  margin: 0 auto 30px;
+
+  .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    position: relative;
+    padding-left: 15px;
+
+    &::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 4px;
+      height: 20px;
+      background: var(--el-color-primary);
+      border-radius: 2px;
+    }
+
+    h2 {
+      margin: 0;
+      font-size: 20px;
+      font-weight: bold;
+      color: #333;
+      display: flex;
+      align-items: center;
+
+      &::before,
+      &::after {
+        content: '"';
+        color: #ccc;
+        margin: 0 5px;
+        font-size: 24px;
+      }
+    }
+
+    .view-more {
+      color: var(--el-color-primary);
+      text-decoration: none;
+      font-size: 14px;
+
+      &:hover {
+        opacity: 0.8;
+      }
+    }
+  }
+}
+
+// 职位列表样式
+.job-list {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+
+  .job-card {
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s;
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .job-title {
+      margin: 0 0 10px;
+      font-size: 16px;
+      color: #333;
+      font-weight: normal;
+    }
+
+    .job-salary {
+      color: #ff4d4f;
+      margin-bottom: 15px;
+      font-size: 16px;
+      font-weight: bold;
+    }
+
+    .job-info {
+      display: flex;
+      gap: 15px;
+      color: #666;
+      margin-bottom: 15px;
+      font-size: 13px;
+    }
+
+    .company-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+
+      img {
+        width: 40px;
+        height: 40px;
+        border-radius: 4px;
+      }
+
+      .info {
+        flex: 1;
+        overflow: hidden;
+
+        .company-name {
+          font-size: 14px;
+          color: #333;
+          margin-bottom: 5px;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+
+        .company-tags {
+          display: flex;
+          gap: 10px;
+          font-size: 12px;
+          color: #999;
+        }
+      }
+    }
+  }
+}
+
+// 公司列表样式
+.company-list {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+
+  .company-card {
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s;
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .company-logo {
+      width: 60px;
+      height: 60px;
+      object-fit: contain;
+      margin-bottom: 15px;
+      border-radius: 8px;
+      padding: 5px;
+      background: #f5f7fa;
+    }
+
+    .company-name {
+      margin: 0 0 10px;
+      font-size: 16px;
+      color: #333;
+    }
+
+    .company-info {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      color: #666;
+      margin-bottom: 15px;
+      font-size: 13px;
+    }
+
+    .hot-jobs {
+      display: inline-block;
+      padding: 5px 15px;
+      background: rgba(var(--el-color-primary-rgb), 0.1);
+      color: var(--el-color-primary);
+      border-radius: 15px;
+      font-size: 13px;
+    }
+  }
+}
+
+:deep(.el-select),
+:deep(.el-input-group--prepend),
+:deep(.el-input-group__prepend) {
+  .el-select__wrapper {
+    box-shadow: none !important;
+    text-align: center;
+  }
+}
+
+.search-type {
+  --el-select-border-color-hover: transparent;
+  --el-select-input-focus-border-color: transparent;
+  --el-select-border-color: transparent;
+
+  .el-input__wrapper {
+    box-shadow: none !important;
+    text-align: center !important;
+  }
+}
+
+.el-input-group__append {
+  background-color: #1677ff !important;
+  border-color: #1677ff !important;
+
+  .el-button {
+    background-color: transparent;
+    border: none;
+    color: #fff;
+    padding: 8px 20px;
+    font-size: 14px;
+    transition: all 0.3s ease;
+
+    &:hover {
+      color: #fff;
+      background-color: #4096ff;
+    }
+
+    &:active {
+      background-color: #0958d9;
+    }
+  }
+
+  &:hover {
+    background-color: #4096ff !important;
+    border-color: #4096ff !important;
+  }
+}

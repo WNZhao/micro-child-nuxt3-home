@@ -1,69 +1,66 @@
 <!-- eslint-disable vue/html-self-closing -->
-<!--
- * @Author: error: error: git config user.name & please set dead value or install git && error: git config user.email & please set dead value or install git & please set dead value or install git
- * @Date: 2025-04-07 17:30:35
- * @LastEditors: error: error: git config user.name & please set dead value or install git && error: git config user.email & please set dead value or install git & please set dead value or install git
- * @LastEditTime: 2025-04-07 23:27:51
- * @FilePath: /micro-child-nuxt3-home/pages/child-home/index.vue
- * @Description: 子页面
--->
 <template>
   <div class="home-page">
     <!-- 搜索区域 -->
     <div class="search-section">
       <div class="search-container">
-        <el-select v-model="searchType" class="search-type">
-          <el-option label="职位" value="job" />
-          <el-option label="企业" value="company" />
-        </el-select>
         <el-input
-          v-model="searchKeyword"
+          size="large"
+          class="input-with-select"
           placeholder="请输入要搜索的关键字，如：会计、仓管、设计师等"
-          class="search-input"
         >
+          <template #prepend>
+            <el-select
+              v-model="searchType"
+              placeholder="职位"
+              class="search-type"
+              style="width: 100px"
+            >
+              <el-option label="职位" value="job" />
+              <el-option label="公司" value="company" />
+            </el-select>
+          </template>
           <template #append>
-            <el-button type="primary" @click="handleSearch">搜索</el-button>
+            <el-button type="primary" style="color: #fff">搜索</el-button>
           </template>
         </el-input>
       </div>
-      <div v-if="data?.data?.hotKeyList" class="hot-keywords">
-        <span class="label">热门职位：</span>
+      <div class="hot-keywords">
+        <span class="label">热搜职位：</span>
         <a
-          v-for="keyword in data.data.hotKeyList"
+          v-for="keyword in homeData?.hotKeyList"
           :key="keyword"
           href="#"
           class="keyword"
-          @click.prevent="handleKeywordClick(keyword)"
           >{{ keyword }}</a
         >
       </div>
     </div>
 
-    <!-- Banner和分类导航区域 -->
+    <!-- 主要内容区域 -->
     <div class="main-content">
       <!-- 左侧分类导航 -->
       <div class="category-nav">
         <div
-          v-for="(category, index) in jobCategories"
-          :key="index"
+          v-for="category in categories"
+          :key="category.name"
           class="category-item"
-          @mouseenter="handleCategoryHover(index)"
-          @mouseleave="handleCategoryLeave"
         >
           {{ category.name }}
-          <div v-if="hoveredCategory === index" class="sub-categories">
+          <div v-if="category.children" class="sub-categories">
             <div
-              v-for="(subCat, subIndex) in category.children"
-              :key="subIndex"
+              v-for="subCategory in category.children"
+              :key="subCategory.name"
               class="sub-category-group"
             >
-              <h4>{{ subCat.name }}</h4>
-              <div class="sub-category-items">
+              <div class="group-title">{{ subCategory.name }}</div>
+              <div class="group-items">
                 <a
-                  v-for="item in subCat.items"
+                  v-for="item in subCategory.items"
                   :key="item"
                   href="#"
-                  @click.prevent="handleSubCategoryClick(item)"
+                  class="item"
+                  @click.prevent="handleItemClick(item)"
                   >{{ item }}</a
                 >
               </div>
@@ -72,121 +69,93 @@
         </div>
       </div>
 
-      <!-- Banner轮播图 -->
-      <div v-if="data?.data?.indexBannerList" class="banner-section">
+      <!-- 右侧轮播图 -->
+      <div class="banner-section">
         <el-carousel height="360px">
           <el-carousel-item
-            v-for="banner in data.data.indexBannerList"
+            v-for="banner in homeData?.indexBannerList"
             :key="banner.id"
           >
-            <img :src="banner.bannerUrlWeb" :alt="banner.remark" />
+            <a :href="banner.linkUrl" target="_blank">
+              <img :src="banner.bannerUrlWeb" :alt="banner.remark" />
+            </a>
           </el-carousel-item>
         </el-carousel>
       </div>
     </div>
 
-    <!-- 最新职位区域 -->
-    <div class="latest-jobs section">
+    <!-- 最新职位 -->
+    <div class="section">
       <div class="section-header">
         <h2>最新职位</h2>
-        <a href="#" class="view-more" @click.prevent="handleViewMoreJobs"
-          >查看更多</a
-        >
+        <a href="#" class="view-more">查看更多</a>
       </div>
-      <div v-if="data?.data?.jobList" class="job-list">
-        <el-row :gutter="20">
-          <el-col
-            v-for="job in data.data.jobList.slice(0, 8)"
-            :key="job.jobId"
-            :span="6"
-          >
-            <div class="job-card">
-              <h3 class="job-title">{{ job.jobTitle }}</h3>
-              <div class="job-salary">{{ job.salaryRange }}</div>
-              <div class="job-info">
-                <span>{{ job.workCity }}</span>
-                <span>{{ job.recruitJobCount }}人</span>
-                <span>{{ job.workAddress }}</span>
-              </div>
-              <div class="job-tags">
-                <el-tag size="small" type="info">{{ job.welfareTag }}</el-tag>
-              </div>
-            </div>
-          </el-col>
-        </el-row>
+      <div class="job-list">
+        <div v-for="job in homeData?.jobList" :key="job.jobId" class="job-card">
+          <h3 class="job-title">{{ job.jobTitle }}</h3>
+          <div class="job-salary">{{ job.salaryRange }}</div>
+          <div class="job-info">
+            <span>{{ job.workCity }}</span>
+            <span>{{ job.recruitJobCount }}人</span>
+            <span>{{ job.workAddress }}</span>
+          </div>
+          <div class="job-tags">
+            <el-tag size="small" type="info">{{ job.welfareTag }}</el-tag>
+          </div>
+        </div>
       </div>
     </div>
 
-    <!-- 名企招聘区域 -->
-    <div class="famous-companies section">
+    <!-- 名企招聘 -->
+    <div class="section">
       <div class="section-header">
         <h2>名企招聘</h2>
-        <a href="#" class="view-more" @click.prevent="handleViewMoreCompanies"
-          >查看更多</a
-        >
+        <a href="#" class="view-more">查看更多</a>
       </div>
-      <div v-if="data?.data?.famousEnterpriseList" class="company-list">
-        <el-row :gutter="20">
-          <el-col
-            v-for="company in data.data.famousEnterpriseList.slice(0, 6)"
-            :key="company.id"
-            :span="4"
-          >
-            <div class="company-card">
-              <img
-                :src="company.logo"
-                :alt="company.name"
-                class="company-logo"
-              />
-              <h3 class="company-name">{{ company.name }}</h3>
-              <div class="company-info">
-                <span>{{ company.industry }}</span>
-                <span>{{ company.scale }}人</span>
-                <span>{{ company.financing }}轮</span>
-              </div>
-              <div class="hot-tag">1个热招职位</div>
-            </div>
-          </el-col>
-        </el-row>
+      <div class="company-list">
+        <div
+          v-for="company in homeData?.famousEnterpriseList"
+          :key="company.id"
+          class="company-card"
+        >
+          <img :src="company.logo" :alt="company.name" class="company-logo" />
+          <h3 class="company-name">{{ company.name }}</h3>
+          <div class="company-info">
+            <span>{{ company.industry }}</span>
+            <span>{{ company.scale }}人</span>
+            <span>{{ company.financing }}轮</span>
+          </div>
+          <div class="hot-tag">1个热招职位</div>
+        </div>
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import { ref, onMounted } from 'vue';
+import type { HomePageData, Category } from '~/types/home';
 import { getIndexData } from '~/api/homeApi';
-import type { ApiResponse, HomePageData } from '~/types/home';
 
-// 搜索相关
+// 搜索类型
 const searchType = ref('job');
-const searchKeyword = ref('');
-const hoveredCategory = ref(-1);
 
-// 职位分类数据
-const jobCategories = ref([
+// 分类数据
+const categories: Category[] = [
   {
-    name: '生活 | 服务业',
+    name: '生活｜服务业',
     children: [
       {
         name: '餐饮',
         items: [
           '服务员',
           '送餐员',
-          '厨师/厨师长',
+          '厨师',
           '后厨',
           '传菜员',
-          '配菜/打荷',
+          '配菜打荷',
           '洗碗工',
           '面点师',
-          '茶艺师',
-          '迎宾/接待',
-          '大堂经理/领班',
-          '餐饮管理',
-          '学徒',
-          '杂工',
-          '日式厨师',
-          '西点师',
-          '餐饮其他',
         ],
       },
       {
@@ -195,41 +164,29 @@ const jobCategories = ref([
           '保洁',
           '保姆',
           '月嫂',
-          '育婴师/保育员',
+          '育婴师',
           '洗衣工',
           '钟点工',
           '保安',
           '护工',
-          '送水工',
-          '保安队长',
-          '家政保洁其他',
         ],
       },
       {
         name: '美容/美发',
         items: [
           '发型师',
-          '美发助理/学徒',
+          '美发助理',
           '洗头工',
-          '美容导师',
           '美容师',
-          '美容助理/学徒',
-          '化妆师',
           '美甲师',
-          '宠物美容/护理',
-          '美容店长',
-          '美容/瘦身顾问',
-          '彩妆培训师',
-          '美体师',
-          '形象设计师',
-          '整容整形师',
-          '美容美发其他',
+          '化妆师',
+          '美容顾问',
         ],
       },
     ],
   },
   {
-    name: '人力 | 行政 | 管理',
+    name: '人力｜行政｜管理',
     children: [
       {
         name: '人力资源',
@@ -237,12 +194,9 @@ const jobCategories = ref([
           '人事专员',
           '招聘专员',
           '培训专员',
-          '人力资源主管',
           'HRBP',
-          '绩效专员',
+          '人力资源主管',
           '薪酬福利专员',
-          '人力资源总监',
-          '员工关系',
         ],
       },
       {
@@ -252,28 +206,18 @@ const jobCategories = ref([
           '前台接待',
           '行政主管',
           '经理助理',
-          '后勤',
-          '司机',
           '文员',
           '资料管理',
         ],
       },
       {
         name: '管理',
-        items: [
-          '总经理',
-          '副总经理',
-          '总裁助理',
-          '项目总监',
-          '运营总监',
-          '商务总监',
-          '管理培训生',
-        ],
+        items: ['总经理', '副总经理', '总监', '项目经理', '部门经理', '主管'],
       },
     ],
   },
   {
-    name: '销售 | 客服 | 采购 | 淘宝',
+    name: '销售｜客服｜采购｜淘宝',
     children: [
       {
         name: '销售',
@@ -285,7 +229,6 @@ const jobCategories = ref([
           '渠道销售',
           '电话销售',
           '销售助理',
-          '商务拓展',
         ],
       },
       {
@@ -293,11 +236,10 @@ const jobCategories = ref([
         items: [
           '客服专员',
           '客服主管',
-          '客服经理',
-          '售前客服',
-          '售后客服',
           '电话客服',
           '在线客服',
+          '客服经理',
+          '售后服务',
         ],
       },
       {
@@ -315,7 +257,7 @@ const jobCategories = ref([
     ],
   },
   {
-    name: '市场 | 媒介 | 广告 | 设计',
+    name: '市场｜媒介｜广告｜设计',
     children: [
       {
         name: '市场/媒介',
@@ -334,10 +276,10 @@ const jobCategories = ref([
         items: [
           '广告创意',
           '广告设计',
-          '广告文案',
+          '文案策划',
           '广告制作',
-          '广告投放',
-          '广告销售',
+          '媒介投放',
+          '广告客户',
         ],
       },
       {
@@ -349,24 +291,23 @@ const jobCategories = ref([
           '室内设计',
           '产品设计',
           '工业设计',
-          '服装设计',
+          '插画师',
         ],
       },
     ],
   },
   {
-    name: '生产 | 物流 | 质控 | 汽车',
+    name: '生产｜物流｜质控｜汽车',
     children: [
       {
-        name: '生产/制造',
+        name: '生产/质控',
         items: [
           '生产员工',
-          '生产主管',
+          '质检员',
+          '车间主管',
           '生产经理',
-          '车间主任',
-          '厂长',
-          '生产总监',
-          '生产计划',
+          '质量主管',
+          '工艺工程师',
         ],
       },
       {
@@ -375,58 +316,71 @@ const jobCategories = ref([
           '仓库管理员',
           '物流专员',
           '快递员',
-          '货运司机',
+          '理货员',
           '物流经理',
-          '供应链经理',
+          '货运司机',
         ],
       },
       {
-        name: '质量管理',
-        items: ['质检员', '质量管理', 'QA', 'QC', '体系工程师', '认证工程师'],
+        name: '汽车',
+        items: [
+          '汽车维修',
+          '汽车美容',
+          '汽车销售',
+          '4S店管理',
+          '汽车检验',
+          '二手车评估',
+        ],
       },
     ],
   },
   {
-    name: '网络 | 通信 | 电子',
+    name: '网络｜通信｜电子',
     children: [
       {
-        name: 'IT/互联网',
+        name: '开发/程序',
         items: [
-          '软件工程师',
-          '前端开发',
+          'Java工程师',
+          'Web前端',
           '后端开发',
-          '测试工程师',
-          '运维工程师',
-          '产品经理',
-          '项目经理',
+          'iOS开发',
+          '安卓开发',
+          '算法工程师',
         ],
       },
       {
-        name: '通信',
-        items: ['通信工程师', '电信工程师', '通信技术员', '通信项目经理'],
+        name: '通信/电子',
+        items: [
+          '通信工程师',
+          '电子工程师',
+          '硬件工程师',
+          '测试工程师',
+          '运维工程师',
+        ],
       },
       {
-        name: '电子/半导体',
+        name: '产品/运营',
         items: [
-          '电子工程师',
-          'IC设计师',
-          'PCB设计',
-          '嵌入式工程师',
-          '电气工程师',
+          '产品经理',
+          '产品助理',
+          '运营专员',
+          '数据分析',
+          '游戏策划',
+          '网站编辑',
         ],
       },
     ],
   },
   {
-    name: '法律 | 教育 | 翻译 | 出版',
+    name: '法律｜教育｜翻译｜出版',
     children: [
       {
         name: '法律',
-        items: ['律师', '法务', '合规经理', '知识产权', '法律顾问'],
+        items: ['律师', '法务', '律师助理', '合规顾问', '法律顾问', '知识产权'],
       },
       {
         name: '教育/培训',
-        items: ['教师', '培训师', '课程顾问', '教务管理', '教育研究'],
+        items: ['教师', '幼师', '培训讲师', '课程顾问', '教务管理', '家教'],
       },
       {
         name: '翻译/出版',
@@ -435,130 +389,179 @@ const jobCategories = ref([
     ],
   },
   {
-    name: '财会 | 金融 | 保险',
+    name: '财会｜金融｜保险',
     children: [
       {
-        name: '财会',
-        items: ['会计', '出纳', '财务经理', '审计', '税务', '财务总监'],
+        name: '财会/审计',
+        items: ['会计', '出纳', '财务主管', '审计', '税务', '财务分析'],
       },
       {
-        name: '金融',
-        items: ['投资经理', '理财顾问', '基金经理', '证券分析师', '风控'],
+        name: '金融/证券',
+        items: [
+          '投资经理',
+          '理财顾问',
+          '证券分析',
+          '基金经理',
+          '信贷专员',
+          '风控',
+        ],
       },
       {
         name: '保险',
-        items: ['保险顾问', '保险经理', '理赔专员', '保险产品开发'],
+        items: [
+          '保险顾问',
+          '保险经理',
+          '理赔专员',
+          '保险培训',
+          '保险内勤',
+          '契约管理',
+        ],
       },
     ],
   },
   {
-    name: '医疗 | 制药 | 环保',
+    name: '医疗｜制药｜环保',
     children: [
       {
         name: '医疗/护理',
-        items: ['医生', '护士', '药剂师', '医学检验', '康复治疗师'],
+        items: ['医生', '护士', '药剂师', '医学影像', '康复治疗', '营养师'],
       },
       {
         name: '制药/生物',
-        items: ['药品研发', '临床研究', '生物工程师', '化学分析'],
+        items: [
+          '药品研发',
+          '生物工程',
+          '临床研究',
+          '医药代表',
+          '化学分析',
+          '药品生产',
+        ],
       },
       {
         name: '环保',
-        items: ['环保工程师', '环境评估', '环保检测', '水处理工程师'],
+        items: [
+          '环保工程师',
+          '环评工程师',
+          '环境监测',
+          '水处理',
+          '固废处理',
+          '环保检测',
+        ],
       },
     ],
   },
   {
-    name: '建筑 | 物业 | 农林牧渔 | 其他',
+    name: '建筑｜物业｜农林牧渔｜其他',
     children: [
       {
         name: '建筑/装修',
-        items: ['建筑工程师', '工程监理', '施工员', '装修设计', '造价师'],
+        items: [
+          '建筑工程师',
+          '工程监理',
+          '建筑设计师',
+          '装修设计',
+          '施工员',
+          '预算员',
+        ],
       },
       {
-        name: '物业管理',
-        items: ['物业经理', '物业维修', '物业客服', '保安主管'],
+        name: '物业/维修',
+        items: ['物业经理', '物业管理', '电工', '维修工', '园艺师', '绿化工'],
       },
       {
         name: '农林牧渔',
-        items: ['农艺师', '畜牧师', '园艺师', '养殖技术员'],
+        items: [
+          '农艺师',
+          '畜牧师',
+          '养殖技术',
+          '园林技术',
+          '林业技术',
+          '饲养员',
+        ],
       },
     ],
   },
-]);
+];
 
-// 使用 useAsyncData 在服务端获取数据
-const { data, pending, error } = await useAsyncData<ApiResponse<HomePageData>>(
-  'home-data',
-  () => getIndexData(),
-  {
-    server: true,
-    lazy: false,
+// 首页数据
+const homeData = ref<HomePageData | null>(null);
+
+// 获取首页数据
+const fetchHomeData = async () => {
+  try {
+    const response = await getIndexData();
+    if (response.success && response.code === '000000') {
+      homeData.value = response.data;
+    }
+  } catch (error) {
+    console.error('获取首页数据失败:', error);
   }
-);
-
-// 处理搜索
-const handleSearch = () => {
-  console.log('搜索类型:', searchType.value);
-  console.log('搜索关键词:', searchKeyword.value);
-  // 跳转到找工作子应用
-  navigateTo('/job-search');
 };
 
-// 处理热门关键词点击
-const handleKeywordClick = (keyword: string) => {
-  searchKeyword.value = keyword;
-  handleSearch();
+// 处理子项点击
+const handleItemClick = (item: string) => {
+  console.log('点击了:', item);
+  // 这里可以添加跳转逻辑
 };
 
-// 处理分类悬停
-const handleCategoryHover = (index: number) => {
-  hoveredCategory.value = index;
-};
-
-// 处理分类离开
-const handleCategoryLeave = () => {
-  hoveredCategory.value = -1;
-};
-
-// 处理子分类点击
-const handleSubCategoryClick = (item: string) => {
-  searchKeyword.value = item;
-  handleSearch();
-};
-
-// 查看更多职位
-const handleViewMoreJobs = () => {
-  navigateTo('/job-search');
-};
-
-// 查看更多企业
-const handleViewMoreCompanies = () => {
-  navigateTo('/company-search');
-};
-
-// 监听数据变化
-watch(data, (newData) => {
-  console.log('数据更新:', newData);
-});
-
-// 监听错误
-watch(error, (newError) => {
-  if (newError) {
-    console.error('监听到错误:', newError);
-  }
-});
-
-// 页面挂载时
 onMounted(() => {
-  console.log('页面挂载完成，当前数据:', {
-    data: data.value,
-    pending: pending.value,
-    error: error.value,
-  });
+  fetchHomeData();
 });
 </script>
 
 <style lang="scss" scoped>
-// 样式已移至 assets/sass/main.scss
+// 搜索类型选择器样式
+:deep(
+    .el-input-group--prepend
+      .el-input-group__prepend
+      .el-select
+      .el-select__wrapper
+  ) {
+  box-shadow: none !important;
+  text-align: center !important;
+}
+
+// 搜索按钮样式
+:deep(.el-input-group__append) {
+  background-color: #1677ff !important;
+  border-color: #1677ff !important;
+
+  .el-button {
+    background-color: transparent;
+    border: none;
+    color: #fff !important;
+    padding: 8px 20px;
+    font-size: 14px;
+    transition: all 0.3s ease;
+
+    &:hover {
+      color: #fff !important;
+      background-color: #4096ff;
+    }
+
+    &:active {
+      background-color: #0958d9;
+    }
+  }
+
+  &:hover {
+    background-color: #4096ff !important;
+    border-color: #4096ff !important;
+  }
+}
+
+// 覆盖 Element Plus 的下拉框样式
+:deep(.el-input-group--prepend) {
+  .el-input-group__prepend {
+    .el-select {
+      .el-input {
+        .el-input__wrapper {
+          box-shadow: none !important;
+          border: none !important;
+          background: transparent !important;
+        }
+      }
+    }
+  }
+}
 </style>
