@@ -71,13 +71,17 @@
 
       <!-- 右侧轮播图 -->
       <div class="banner-section">
-        <el-carousel height="360px">
+        <el-carousel height="510px">
           <el-carousel-item
             v-for="banner in homeData?.indexBannerList"
             :key="banner.id"
           >
-            <a :href="banner.linkUrl" target="_blank">
-              <img :src="banner.bannerUrlWeb" :alt="banner.remark" />
+            <a :href="banner.linkUrl" target="_blank" class="banner-item-link">
+              <img
+                :src="banner.bannerUrlWeb"
+                :alt="banner.remark"
+                class="banner-item-img"
+              />
             </a>
           </el-carousel-item>
         </el-carousel>
@@ -562,6 +566,22 @@ onMounted(() => {
         }
       }
     }
+  }
+}
+.el-carousel__item {
+  display: flex;
+  justify-content: stretch;
+  align-items: stretch;
+}
+.banner-item-link {
+  // align-self: stretch;
+  // justify-self: stretch;
+  width: 100%;
+  height: 100%;
+  .banner-item-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
   }
 }
 </style>
